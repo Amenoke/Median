@@ -1,0 +1,717 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Median</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00c8ff;
+            --primary-dark: #0099cc;
+            --dark: #001a33;
+            --light: #ffffff;
+            --gray: #a0a8c0;
+            --editor-bg: #001a33;
+            --editor-line: #003366;
+            --editor-active-line: #00264d;
+            --editor-selection: #004080;
+            --editor-gutter: #001a33;
+            --editor-gutter-text: #4d88cc;
+            --terminal-bg: #001a33;
+            --terminal-header: #00264d;
+            --terminal-border: #004080;
+            --window-border: #004080;
+            --window-header: #00264d;
+            --resizer-bg: #004080;
+            --error: #ff5555;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--light);
+            background: 
+                linear-gradient(135deg, rgba(0,20,40,0.95) 0%, rgba(0,40,80,0.9) 100%),
+                url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=1471&auto=format&fit=crop') no-repeat center/cover;
+            min-height: 100vh;
+            line-height: 1.6;
+            touch-action: pan-y;
+            overflow: hidden;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 20, 40, 0.8);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: var(--primary);
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        .main-container {
+            padding-top: 100px;
+            height: calc(100vh - 100px);
+            position: relative;
+        }
+        .window {
+            position: absolute;
+            background: var(--editor-bg);
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--window-border);
+            overflow: hidden;
+            min-width: 300px;
+            min-height: 200px;
+            resize: both;
+        }
+        .window-header {
+            background: var(--window-header);
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            border-bottom: 1px solid var(--window-border);
+        }
+        .window-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        .window-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .window-title {
+            flex-grow: 1;
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+        .window-tabs {
+            display: flex;
+        }
+        .window-tab {
+            padding: 0.25rem 0.75rem;
+            color: var(--gray);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-right: 1px solid var(--window-border);
+        }
+        .window-tab.active {
+            color: var(--light);
+            background: var(--editor-bg);
+        }
+        .window-content {
+            height: calc(100% - 36px);
+            overflow: hidden;
+            position: relative;
+        }
+        .editor-container {
+            display: flex;
+            height: 100%;
+        }
+        .editor-gutter {
+            width: 40px;
+            background: var(--editor-gutter);
+            color: var(--editor-gutter-text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            text-align: right;
+            padding: 0.5rem;
+            user-select: none;
+            border-right: 1px solid var(--editor-line);
+            overflow-y: hidden;
+        }
+        .editor-area {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .code-editor {
+            width: 100%;
+            height: 100%;
+            padding: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--light);
+            background: var(--editor-bg);
+            border: none;
+            resize: none;
+            outline: none;
+            white-space: pre;
+            tab-size: 4;
+            display: none;
+        }
+        .code-editor.active {
+            display: block;
+        }
+        .code-editor:focus {
+            background: var(--editor-active-line);
+        }
+        .terminal-container {
+            height: 100%;
+        }
+        .terminal-content {
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #cccccc;
+            height: calc(100% - 2rem);
+            overflow-y: auto;
+        }
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .terminal-prompt {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        .terminal-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .terminal-output {
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+        .terminal-output.error {
+            color: var(--error);
+        }
+        .run-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.8rem 2rem;
+            background: var(--primary);
+            color: var(--dark);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        .run-button:hover {
+            background: var(--light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 200, 255, 0.3);
+        }
+        .resizer {
+            position: absolute;
+            background: transparent;
+            z-index: 10;
+        }
+        .resizer-n {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            cursor: n-resize;
+        }
+        .resizer-e {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 5px;
+            cursor: e-resize;
+        }
+        .resizer-s {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            cursor: s-resize;
+        }
+        .resizer-w {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 5px;
+            cursor: w-resize;
+        }
+        .resizer-ne {
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            cursor: ne-resize;
+        }
+        .resizer-nw {
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            cursor: nw-resize;
+        }
+        .resizer-se {
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            cursor: se-resize;
+        }
+        .resizer-sw {
+            bottom: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            cursor: sw-resize;
+        }
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+            .window {
+                min-width: 250px;
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">M</div>
+            <span>Median</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="documentation.html">Documentation</a></li>
+                <li><a href="https://github.com/Amenoke/Median" target="_blank">GitHub</a></li>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-container" id="main-container">
+        <div class="window" id="editor-window" style="width: 60%; height: 60%; left: 5%; top: 10%;">
+            <div class="window-header">
+                <div class="window-dots">
+                    <div class="window-dot dot-red"></div>
+                    <div class="window-dot dot-yellow"></div>
+                    <div class="window-dot dot-green"></div>
+                </div>
+                <div class="window-title">Editor</div>
+                <div class="window-tabs">
+                    <div class="window-tab active" data-file="main.mdn">main.mdn</div>
+                    <div class="window-tab" data-file="config.mdn">config.mdn</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="editor-container">
+                    <div class="editor-gutter" id="line-numbers">1<br>2<br>3<br>4<br>5</div>
+                    <div class="editor-area">
+                        <textarea class="code-editor active" id="main-editor" spellcheck="false"></textarea>
+                        <textarea class="code-editor" id="config-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="resizer resizer-n"></div>
+            <div class="resizer resizer-e"></div>
+            <div class="resizer resizer-s"></div>
+            <div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div>
+            <div class="resizer resizer-nw"></div>
+            <div class="resizer resizer-se"></div>
+            <div class="resizer resizer-sw"></div>
+        </div>
+        <div class="window" id="terminal-window" style="width: 50%; height: 35%; left: 40%; top: 50%;">
+            <div class="window-header">
+                <div class="window-dots">
+                    <div class="window-dot dot-red"></div>
+                    <div class="window-dot dot-yellow"></div>
+                    <div class="window-dot dot-green"></div>
+                </div>
+                <div class="window-title">Terminal</div>
+            </div>
+            <div class="window-content">
+                <div class="terminal-container">
+                    <div class="terminal-content" id="terminal-content">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">┌──</span>
+                            <span class="terminal-output">(Host@root-[~])</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">└─$ </span>
+                            <span class="terminal-output"> CGTHUB    /Amenoke</span>
+                        </div>
+                        <div class="terminal-line" id="command-line">
+                            <span class="terminal-prompt">$</span>
+                            <input type="text" class="terminal-input" id="terminal-input" placeholder="Enter command...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="resizer resizer-n"></div>
+            <div class="resizer resizer-e"></div>
+            <div class="resizer resizer-s"></div>
+            <div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div>
+            <div class="resizer resizer-nw"></div>
+            <div class="resizer resizer-se"></div>
+            <div class="resizer resizer-sw"></div>
+        </div>
+        <button class="run-button" id="run-button">Run Code</button>
+    </div>
+
+    <script src="median-core.js"></script>
+    
+    <script>
+        const medianCore = new MedianCore();
+        
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalContent = document.getElementById('terminal-content');
+        const mainEditor = document.getElementById('main-editor');
+        const configEditor = document.getElementById('config-editor');
+        const runButton = document.getElementById('run-button');
+        
+        let commandHistory = [];
+        let historyIndex = -1;
+        try {
+            medianCore.loadConfig(configEditor.value);
+        } catch (e) {
+            showError('Failed to load initial config');
+        }
+
+        terminalInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    this.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                }
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    this.value = commandHistory[commandHistory.length - 1 - historyIndex];
+                } else {
+                    historyIndex = -1;
+                    this.value = '';
+                }
+                return;
+            }
+            
+            if (e.key === 'Enter') {
+                const input = this.value.trim();
+                if (input === '') return;
+                
+                commandHistory.push(input);
+                historyIndex = -1;
+                
+                showCommand(input);
+                processMedianCommand(input);
+                
+                this.value = '';
+                scrollTerminal();
+            }
+        });
+
+        runButton.addEventListener('click', function() {
+            const code = mainEditor.value;
+            const lines = code.split('\n');
+            
+            lines.forEach(line => {
+                if (line.trim() !== '') {
+                    showCommand(line.trim());
+                    processMedianCommand(line.trim());
+                }
+            });
+            
+            scrollTerminal();
+        });
+
+        function processMedianCommand(command) {
+            try {
+                const result = medianCore.processCommand(command);
+                showOutput(result);
+                
+                if (command.startsWith('~compil') || command.startsWith('~config')) {
+                    configEditor.value = medianCore.getConfigString();
+                }
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+
+        function showCommand(cmd) {
+            const line = document.createElement('div');
+            line.className = 'terminal-line';
+            line.innerHTML = `<span class="terminal-prompt">$</span><span class="terminal-output">${cmd}</span>`;
+            terminalContent.insertBefore(line, terminalInput.parentNode);
+        }
+
+        function showOutput(text) {
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                const output = document.createElement('div');
+                output.className = line.toLowerCase().includes('error') ? 
+                    'terminal-output error' : 'terminal-output';
+                output.textContent = line;
+                terminalContent.insertBefore(output, terminalInput.parentNode);
+            });
+        }
+
+        function showError(msg) {
+            const err = document.createElement('div');
+            err.className = 'terminal-output error';
+            err.textContent = `Error: ${msg}`;
+            terminalContent.insertBefore(err, terminalInput.parentNode);
+        }
+
+        function scrollTerminal() {
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+
+        function makeDraggable(windowElement) {
+            const header = windowElement.querySelector('.window-header');
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('window-tab')) return;
+                
+                isDragging = true;
+                offsetX = e.clientX - windowElement.getBoundingClientRect().left;
+                offsetY = e.clientY - windowElement.getBoundingClientRect().top;
+                windowElement.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const container = document.getElementById('main-container');
+                const containerRect = container.getBoundingClientRect();
+                
+                let left = e.clientX - offsetX - containerRect.left;
+                let top = e.clientY - offsetY - containerRect.top;
+                
+                left = Math.max(0, Math.min(left, containerRect.width - windowElement.offsetWidth));
+                top = Math.max(0, Math.min(top, containerRect.height - windowElement.offsetHeight));
+                
+                windowElement.style.left = `${left}px`;
+                windowElement.style.top = `${top}px`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                windowElement.style.cursor = '';
+            });
+        }
+
+        function makeResizable(windowElement) {
+            const resizers = windowElement.querySelectorAll('.resizer');
+            let currentResizer = null;
+            let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(windowElement).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(windowElement).height, 10);
+                    startLeft = parseInt(document.defaultView.getComputedStyle(windowElement).left, 10);
+                    startTop = parseInt(document.defaultView.getComputedStyle(windowElement).top, 10);
+                    e.preventDefault();
+                });
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!currentResizer) return;
+                
+                const container = document.getElementById('main-container');
+                const minWidth = 300;
+                const minHeight = 200;
+                
+                if (currentResizer.classList.contains('resizer-n')) {
+                    const height = startHeight - (e.clientY - startY);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                        windowElement.style.top = `${startTop + (e.clientY - startY)}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-e')) {
+                    const width = startWidth + (e.clientX - startX);
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-s')) {
+                    const height = startHeight + (e.clientY - startY);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-w')) {
+                    const width = startWidth - (e.clientX - startX);
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                        windowElement.style.left = `${startLeft + (e.clientX - startX)}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-ne')) {
+                    const height = startHeight - (e.clientY - startY);
+                    const width = startWidth + (e.clientX - startX);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                        windowElement.style.top = `${startTop + (e.clientY - startY)}px`;
+                    }
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-nw')) {
+                    const height = startHeight - (e.clientY - startY);
+                    const width = startWidth - (e.clientX - startX);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                        windowElement.style.top = `${startTop + (e.clientY - startY)}px`;
+                    }
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                        windowElement.style.left = `${startLeft + (e.clientX - startX)}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-se')) {
+                    const height = startHeight + (e.clientY - startY);
+                    const width = startWidth + (e.clientX - startX);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                    }
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                    }
+                }
+                else if (currentResizer.classList.contains('resizer-sw')) {
+                    const height = startHeight + (e.clientY - startY);
+                    const width = startWidth - (e.clientX - startX);
+                    if (height >= minHeight) {
+                        windowElement.style.height = `${height}px`;
+                    }
+                    if (width >= minWidth) {
+                        windowElement.style.width = `${width}px`;
+                        windowElement.style.left = `${startLeft + (e.clientX - startX)}px`;
+                    }
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                currentResizer = null;
+            });
+        }
+
+        document.querySelectorAll('.window-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.window-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.code-editor').forEach(e => e.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const fileId = tab.getAttribute('data-file').replace('.mdn', '-editor');
+                document.getElementById(fileId).classList.add('active');
+                updateLineNumbers();
+            });
+        });
+
+        function updateLineNumbers() {
+            const activeEditor = document.querySelector('.code-editor.active');
+            if (!activeEditor) return;
+            
+            const lines = activeEditor.value.split('\n').length;
+            let numbers = '';
+            for (let i = 1; i <= lines; i++) {
+                numbers += i + '<br>';
+            }
+            document.getElementById('line-numbers').innerHTML = numbers;
+        }
+
+        document.querySelectorAll('.code-editor').forEach(editor => {
+            editor.addEventListener('input', updateLineNumbers);
+            editor.addEventListener('scroll', function() {
+                document.getElementById('line-numbers').scrollTop = this.scrollTop;
+            });
+        });
+
+        document.querySelectorAll('.window').forEach(windowElement => {
+            makeDraggable(windowElement);
+            makeResizable(windowElement);
+        });
+
+
+        updateLineNumbers();
+        terminalInput.focus();
+    </script>
+</body>
+</html>
