@@ -4,16 +4,11 @@
 //      ~ Amenoke
 //
 
-
 class MedianCore {
 
-
-//
-//
-// [STANDARD CONFIGURATION]
-//
-//
-
+    //
+    // [STANDARD CONFIGURATION]
+    //
 
     constructor() {
         this.config = {
@@ -36,15 +31,16 @@ class MedianCore {
             }
         };
 
-
-//
-//
-// [COMPILERS CONFIGURATION]
-//
-//
-
+        //
+        // [COMPILERS CONFIGURATION]
+        //
 
         this.compilers = {
+            'null': {
+                name: 'Null Compiler',
+                description: 'No compilation available',
+                options: {}
+            },
             'DI': {
                 name: 'Direct Interpreter',
                 description: 'Executes code directly without compilation',
@@ -53,7 +49,7 @@ class MedianCore {
                     jit: false
                 }
             },
-            'FlComp': {
+            'FC': {
                 name: 'Flexible Compiler',
                 description: 'Balanced compilation with optimizations',
                 options: {
@@ -61,7 +57,7 @@ class MedianCore {
                     inlineFunctions: true
                 }
             },
-            'DirComp': {
+            'DC': {
                 name: 'Direct Compiler',
                 description: 'Fast compilation with minimal optimizations',
                 options: {
@@ -71,63 +67,31 @@ class MedianCore {
             }
         };
 
-
-//
-//
-// [SYSTEM CONFIGURATION]
-//
-//
-//
-
+        //
+        // [SYSTEM CONFIGURATION]
+        //
 
         this.memoryUsage = 0;
         this.compilationCache = {};
         this.lastError = null;
     }
 
-
-//
-//
-// [SETTINGS]
-//
-//
-//
-
+    //
+    // [COMMAND PROCESSING]
+    //
 
     processCommand(command) {
         try {
-
-
-// [MEMORY]
-
-
             this.checkMemory();
-
-
-// [ERROR]
-
-
             this.lastError = null;
-
-
-// [TYPES]
-
 
             if (command.startsWith('~')) {
                 return this.processSystemCommand(command);
             }
 
-
-// [COMPILER]
-
-
-            if (!this.config.compiler) {
-                throw new Error('Host.exception => Compiler $');
+            if (this.config.compiler === null) {
+                throw new Error('Host.exception => No compiler set (use ~compil to set)');
             }
-
-
-// [COMMAND]
-
 
             return this.processCodeCommand(command);
         } catch (e) {
@@ -136,14 +100,15 @@ class MedianCore {
         }
     }
 
-
-// [SYSTEM]
-
+    //
+    // [SYSTEM COMMANDS]
+    //
 
     processSystemCommand(command) {
         const parts = command.split(' ');
         const cmd = parts[0];
         const args = parts.slice(1);
+
         switch (cmd) {
             case '~compil':
                 return this.handleCompilerCommand(args);
@@ -158,22 +123,26 @@ class MedianCore {
         }
     }
 
-
-// [HANDLES]
-
+    //
+    // [COMPILER HANDLING]
+    //
 
     handleCompilerCommand(args) {
         if (args.length === 0) {
             return this.listAvailableCompilers();
         }
+
         const compiler = args[0].toUpperCase();
+
+        if (compiler === 'NULL') {
+            this.config.compiler = null;
+            this.config.compilerOptions = {};
+            return 'Compiler set to null (no compiler active)';
+        }
+
         if (!this.compilers[compiler]) {
             throw new Error(`Compiler.exception => ${compiler}`);
         }
-
-
-// [COMPILERS INSTALLING]
-
 
         this.config.compiler = compiler;
         this.config.compilerOptions = {
@@ -182,103 +151,33 @@ class MedianCore {
         return `${this.compilers[compiler].name} $$ merged (\n${this.compilers[compiler].description})`;
     }
 
-
-// [CONFIGURATION COMMANDS]
+    //
+    // [CONFIGURATION HANDLING]
+    //
 
     handleConfigCommand(args) {
         if (args.length === 0) {
             return this.getConfigString();
         }
+
         if (args[0] === 'set' && args.length >= 3) {
             const path = args[1].split('.');
             const value = args.slice(2).join(' ');
             return this.setConfigValue(path, value);
         }
+
         throw new Error('Configuration $$ exception');
     }
 
-
-// [MEMORY COMMANDS]
-
-
-    handleMemoryCommand() {
-        const usedMB = (this.memoryUsage / (1024 * 1024)).toFixed(2);
-        const limitMB = this.config.bash.memoryLimitMB;
-        const percent = (this.memoryUsage / (limitMB * 1024 * 1024) * 100).toFixed(1);
-        return `Memory usage: ${usedMB} MB / ${limitMB} MB (${percent}%)`;
-    }
-
-
-// [SYSTEM STATE]
-
-
-    handleResetCommand() {
-        this.memoryUsage = 0;
-        this.compilationCache = {};
-        return 'System state reset';
-    }
-
-
-//
-//
-// [COMMAND BLOCK]
-//
-//
-//
-
-
-    processCodeCommand(command) {
-        this.memoryUsage += command.length * 100;
-        switch (this.config.compiler) {
-            case 'DI':
-                return this.processWithDirectInterpreter(command);
-            case 'FlComp':
-                return this.processWithFlexibleCompiler(command);
-            case 'DirComp':
-                return this.processWithDirectCompiler(command);
-            default:
-                throw new Error('Compiler.exception ~');
-        }
-    }
-
-
-// [METHODS]
-
-
-    processWithDirectInterpreter(code) {
-        return `${code}`;
-    }
-    processWithFlexibleCompiler(code) {
-        return `${code}`;
-    }
-
-    processWithDirectCompiler(code) {
-        return `${code}`;
-    }
-
-
-// [SUBMETHODS]
-
-
-    listAvailableCompilers() {
-        let result = 'Available compilers:\n';
-        for (const [key, comp] of Object.entries(this.compilers)) {
-            result += `  ${key}: ${comp.name}\n    ${comp.description}\n`;
-        }
-        return result.trim();
-    }
     setConfigValue(path, value) {
         let current = this.config;
+
         for (let i = 0; i < path.length - 1; i++) {
             if (!current[path[i]]) {
                 current[path[i]] = {};
             }
             current = current[path[i]];
         }
-
-
-// [TYPE CONVERT]
-
 
         let finalValue;
         if (value === 'true') finalValue = true;
@@ -289,15 +188,76 @@ class MedianCore {
         current[path[path.length - 1]] = finalValue;
         return `Config updated: ${path.join('.')} = ${finalValue}`;
     }
+
+    //
+    // [MEMORY MANAGEMENT]
+    //
+
+    handleMemoryCommand() {
+        const usedMB = (this.memoryUsage / (1024 * 1024)).toFixed(2);
+        const limitMB = this.config.bash.memoryLimitMB;
+        const percent = (this.memoryUsage / (limitMB * 1024 * 1024) * 100).toFixed(1);
+        return `Memory usage: ${usedMB} MB / ${limitMB} MB (${percent}%)`;
+    }
+
     checkMemory() {
         if (this.memoryUsage > this.config.bash.memoryLimitMB * 1024 * 1024) {
             throw new Error(`Memory limit exceeded (${this.config.bash.memoryLimitMB}MB)`);
         }
     }
 
+    //
+    // [SYSTEM STATE]
+    //
 
-// [CONFIGURATION METHODS]
+    handleResetCommand() {
+        this.memoryUsage = 0;
+        this.compilationCache = {};
+        return 'System state reset';
+    }
 
+    //
+    // [CODE PROCESSING]
+    //
+
+    processCodeCommand(command) {
+        this.memoryUsage += command.length * 100;
+
+        switch (this.config.compiler) {
+            case 'DI':
+                return this.processWithDirectInterpreter(command);
+            case 'FC':
+                return this.processWithFlexibleCompiler(command);
+            case 'DC':
+                return this.processWithDirectCompiler(command);
+            default:
+                throw new Error('Compiler.exception ~');
+        }
+    }
+
+    processWithDirectInterpreter(code) {
+        return `${code}`;
+    }
+
+    processWithFlexibleCompiler(code) {
+        return `${code}`;
+    }
+
+    processWithDirectCompiler(code) {
+        return `${code}`;
+    }
+
+    //
+    // [UTILITY METHODS]
+    //
+
+    listAvailableCompilers() {
+        let result = 'Available compilers:\n';
+        for (const [key, comp] of Object.entries(this.compilers)) {
+            result += `  ${key}: ${comp.name}\n    ${comp.description}\n`;
+        }
+        return result.trim();
+    }
 
     getConfigString() {
         return `${JSON.stringify({
@@ -307,6 +267,7 @@ class MedianCore {
             configuration: this.config.configuration
         }, null, 2)}`;
     }
+
     loadConfig(config) {
         try {
             const parsed = JSON.parse(config.replace(/\/\/.*$/gm, '').trim());
@@ -327,9 +288,11 @@ class MedianCore {
             throw new Error('Invalid config format');
         }
     }
+
     resetMemoryUsage() {
         this.memoryUsage = 0;
     }
+
     getLastError() {
         return this.lastError;
     }
