@@ -23,7 +23,7 @@ class MedianCore {
                 strictMode: false,
                 debugSymbols: true
             },
-            terminal: {
+            bash: {
                 memoryLimitMB: 512,
                 timeoutMs: 10000,
                 maxOutputLines: 1000,
@@ -31,6 +31,9 @@ class MedianCore {
                 theme: 'dark',
                 autoScroll: true
             },
+            configuration: {
+                key: '1.0.0'
+            }
         };
 
 
@@ -200,7 +203,7 @@ class MedianCore {
 
     handleMemoryCommand() {
         const usedMB = (this.memoryUsage / (1024 * 1024)).toFixed(2);
-        const limitMB = this.config.terminal.memoryLimitMB;
+        const limitMB = this.config.bash.memoryLimitMB;
         const percent = (this.memoryUsage / (limitMB * 1024 * 1024) * 100).toFixed(1);
         return `Memory usage: ${usedMB} MB / ${limitMB} MB (${percent}%)`;
     }
@@ -287,8 +290,8 @@ class MedianCore {
         return `Config updated: ${path.join('.')} = ${finalValue}`;
     }
     checkMemory() {
-        if (this.memoryUsage > this.config.terminal.memoryLimitMB * 1024 * 1024) {
-            throw new Error(`Memory limit exceeded (${this.config.terminal.memoryLimitMB}MB)`);
+        if (this.memoryUsage > this.config.bash.memoryLimitMB * 1024 * 1024) {
+            throw new Error(`Memory limit exceeded (${this.config.bash.memoryLimitMB}MB)`);
         }
     }
 
@@ -300,8 +303,8 @@ class MedianCore {
         return `${JSON.stringify({
             compiler: this.config.compiler,
             compilerOptions: this.config.compilerOptions,
-            terminal: this.config.terminal,
-            libraries: this.config.libraries
+            bash: this.config.bash,
+            configuration: this.config.configuration
         }, null, 2)}`;
     }
     loadConfig(config) {
@@ -310,9 +313,9 @@ class MedianCore {
             this.config = {
                 ...this.config,
                 ...parsed,
-                terminal: {
-                    ...this.config.terminal,
-                    ...(parsed.terminal || {})
+                bash: {
+                    ...this.config.bash,
+                    ...(parsed.bash || {})
                 },
                 compilerOptions: {
                     ...this.config.compilerOptions,
