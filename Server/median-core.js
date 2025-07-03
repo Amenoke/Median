@@ -31,10 +31,6 @@ class MedianCore {
                 theme: 'dark',
                 autoScroll: true
             },
-            libraries: {
-                std: '1.2.0',
-                math: '0.9.3'
-            }
         };
 
 
