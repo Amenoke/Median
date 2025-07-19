@@ -325,6 +325,20 @@
             height: 10px;
             cursor: sw-resize;
         }
+        .window-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 1rem;
+        }
+        .window-action {
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        .window-action:hover {
+            color: var(--primary);
+        }
         @media (max-width: 768px) {
             nav ul {
                 gap: 1rem;
@@ -340,7 +354,7 @@
     <header>
         <div class="logo">
             <div class="logo-icon">M</div>
-            <span>Median Playground</span>
+            <span>Median</span>
         </div>
         <nav>
             <ul>
@@ -363,6 +377,9 @@
                 <div class="window-tabs">
                     <div class="window-tab active" data-file="main.mdn">main.mdn</div>
                     <div class="window-tab" data-file="config.mdn">config.mdn</div>
+                </div>
+                <div class="window-actions">
+                    <div class="window-action" id="extract-config">Extract Config</div>
                 </div>
             </div>
             <div class="window-content">
@@ -432,9 +449,12 @@
         const mainEditor = document.getElementById('main-editor');
         const configEditor = document.getElementById('config-editor');
         const runButton = document.getElementById('run-button');
+        const extractConfigButton = document.getElementById('extract-config');
         
         let commandHistory = [];
         let historyIndex = -1;
+        let configWindow = null;
+        
         try {
             medianCore.loadConfig(configEditor.value);
         } catch (e) {
@@ -491,6 +511,98 @@
             scrollTerminal();
         });
 
+        extractConfigButton.addEventListener('click', function() {
+            if (configWindow) {
+                configWindow.style.zIndex = getHighestZIndex() + 1;
+                return;
+            }
+            
+            configWindow = document.createElement('div');
+            configWindow.className = 'window';
+            configWindow.id = 'config-window';
+            configWindow.style.width = '40%';
+            configWindow.style.height = '50%';
+            configWindow.style.left = '50%';
+            configWindow.style.top = '20%';
+            configWindow.style.zIndex = getHighestZIndex() + 1;
+            
+            configWindow.innerHTML = `
+                <div class="window-header">
+                    <div class="window-dots">
+                        <div class="window-dot dot-red"></div>
+                        <div class="window-dot dot-yellow"></div>
+                        <div class="window-dot dot-green"></div>
+                    </div>
+                    <div class="window-title">Configuration</div>
+                    <div class="window-actions">
+                        <div class="window-action" id="close-config">Close</div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="editor-container">
+                        <div class="editor-gutter" id="config-line-numbers">1<br>2<br>3<br>4<br>5</div>
+                        <div class="editor-area">
+                            <textarea class="code-editor active" id="standalone-config-editor" spellcheck="false">${configEditor.value}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="resizer resizer-n"></div>
+                <div class="resizer resizer-e"></div>
+                <div class="resizer resizer-s"></div>
+                <div class="resizer resizer-w"></div>
+                <div class="resizer resizer-ne"></div>
+                <div class="resizer resizer-nw"></div>
+                <div class="resizer resizer-se"></div>
+                <div class="resizer resizer-sw"></div>
+            `;
+            
+            document.getElementById('main-container').appendChild(configWindow);
+            
+            makeDraggable(configWindow);
+            makeResizable(configWindow);
+            
+            configWindow.querySelector('#close-config').addEventListener('click', function() {
+                configEditor.value = configWindow.querySelector('#standalone-config-editor').value;
+                document.getElementById('main-container').removeChild(configWindow);
+                configWindow = null;
+            });
+            
+            const standaloneConfigEditor = configWindow.querySelector('#standalone-config-editor');
+            const configLineNumbers = configWindow.querySelector('#config-line-numbers');
+            
+            standaloneConfigEditor.addEventListener('input', function() {
+                const lines = this.value.split('\n').length;
+                let numbers = '';
+                for (let i = 1; i <= lines; i++) {
+                    numbers += i + '<br>';
+                }
+                configLineNumbers.innerHTML = numbers;
+            });
+            
+            standaloneConfigEditor.addEventListener('scroll', function() {
+                configLineNumbers.scrollTop = this.scrollTop;
+            });
+
+            const lines = standaloneConfigEditor.value.split('\n').length;
+            let numbers = '';
+            for (let i = 1; i <= lines; i++) {
+                numbers += i + '<br>';
+            }
+            configLineNumbers.innerHTML = numbers;
+        });
+
+        function getHighestZIndex() {
+            const windows = document.querySelectorAll('.window');
+            let highest = 0;
+            windows.forEach(window => {
+                const zIndex = parseInt(window.style.zIndex || '0');
+                if (zIndex > highest) {
+                    highest = zIndex;
+                }
+            });
+            return highest;
+        }
+
         function processMedianCommand(command) {
             try {
                 const result = medianCore.processCommand(command);
@@ -498,6 +610,9 @@
                 
                 if (command.startsWith('~compil') || command.startsWith('~config')) {
                     configEditor.value = medianCore.getConfigString();
+                    if (configWindow) {
+                        configWindow.querySelector('#standalone-config-editor').value = medianCore.getConfigString();
+                    }
                 }
             } catch (e) {
                 showError(e.message);
@@ -540,12 +655,16 @@
             let offsetX, offsetY;
 
             header.addEventListener('mousedown', (e) => {
-                if (e.target.classList.contains('window-tab')) return;
+                if (e.target.classList.contains('window-tab') || 
+                    e.target.classList.contains('window-action')) {
+                    return;
+                }
                 
                 isDragging = true;
                 offsetX = e.clientX - windowElement.getBoundingClientRect().left;
                 offsetY = e.clientY - windowElement.getBoundingClientRect().top;
                 windowElement.style.cursor = 'grabbing';
+                windowElement.style.zIndex = getHighestZIndex() + 1;
                 e.preventDefault();
             });
 
@@ -585,6 +704,7 @@
                     startHeight = parseInt(document.defaultView.getComputedStyle(windowElement).height, 10);
                     startLeft = parseInt(document.defaultView.getComputedStyle(windowElement).left, 10);
                     startTop = parseInt(document.defaultView.getComputedStyle(windowElement).top, 10);
+                    windowElement.style.zIndex = getHighestZIndex() + 1;
                     e.preventDefault();
                 });
             });
@@ -708,7 +828,6 @@
             makeDraggable(windowElement);
             makeResizable(windowElement);
         });
-
 
         updateLineNumbers();
         terminalInput.focus();
