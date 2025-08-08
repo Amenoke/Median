@@ -8,30 +8,30 @@
 class MedianCore {
     constructor() {
 
-        
-//////////////////////////////////////////////////
-// [INITIAL CONFIGURATION]
-//////////////////////////////////////////////////
-// Config initialization via the internal system.
-// This module enables the initialization of default configuration settings
-//////////////////////////////////////////////////
-// [compiler]
-// Selecting a compiler for terminal operations.
-// args: DI, FL, DC, null
-// DI - direct interpretation
-// FL - flexible compilation
-// DC - direct compilation
-// null - ~
-//////////////////////////////////////////////////
-// [optimizationlevel] ~
-// args: int32
-//////////////////////////////////////////////////
-// [strictMode] ~
-// args: bool
-//////////////////////////////////////////////////
-// [debugSymbols] ~
-// args: bool
-//////////////////////////////////////////////////
+
+        //////////////////////////////////////////////////
+        // [INITIAL CONFIGURATION]
+        //////////////////////////////////////////////////
+        // Config initialization via the internal system.
+        // This module enables the initialization of default configuration settings
+        //////////////////////////////////////////////////
+        // [compiler]
+        // Selecting a compiler for terminal operations.
+        // args: DI, FL, DC, null
+        // DI - direct interpretation
+        // FL - flexible compilation
+        // DC - direct compilation
+        // null - ~
+        //////////////////////////////////////////////////
+        // [optimizationlevel] ~
+        // args: int32
+        //////////////////////////////////////////////////
+        // [strictMode] ~
+        // args: bool
+        //////////////////////////////////////////////////
+        // [debugSymbols] ~
+        // args: bool
+        //////////////////////////////////////////////////
 
 
         this.config = {
@@ -43,25 +43,25 @@ class MedianCore {
             },
 
 
-//////////////////////////////////////////////////
-// [memoryLimitMB] ~
-// args: int32{pows of 2}
-//////////////////////////////////////////////////
-// [timeoutMs] ~
-// args: int32
-//////////////////////////////////////////////////
-// [maxOutputLines] ~
-// args: int32
-//////////////////////////////////////////////////
-// [historySize] ~
-// args: int32
-//////////////////////////////////////////////////
-// [theme] ~
-// args: 'dark'
-//////////////////////////////////////////////////
-// [autoScroll] ~
-// args: bool
-//////////////////////////////////////////////////
+            //////////////////////////////////////////////////
+            // [memoryLimitMB] ~
+            // args: int32{pows of 2}
+            //////////////////////////////////////////////////
+            // [timeoutMs] ~
+            // args: int32
+            //////////////////////////////////////////////////
+            // [maxOutputLines] ~
+            // args: int32
+            //////////////////////////////////////////////////
+            // [historySize] ~
+            // args: int32
+            //////////////////////////////////////////////////
+            // [theme] ~
+            // args: 'dark'
+            //////////////////////////////////////////////////
+            // [autoScroll] ~
+            // args: bool
+            //////////////////////////////////////////////////
 
 
             bash: {
@@ -74,10 +74,10 @@ class MedianCore {
             },
 
 
-//////////////////////////////////////////////////
-// [key] ~
-// args: '1.0.0'
-//////////////////////////////////////////////////
+            //////////////////////////////////////////////////
+            // [key] ~
+            // args: '1.0.0'
+            //////////////////////////////////////////////////
 
 
             configuration: {
@@ -86,13 +86,13 @@ class MedianCore {
         };
 
 
-//////////////////////////////////////////////////
-// [COMPILERS REGISTRY]
-//////////////////////////////////////////////////
-// [name]
-//////////////////////////////////////////////////
-// [description]
-//////////////////////////////////////////////////
+        //////////////////////////////////////////////////
+        // [COMPILERS REGISTRY]
+        //////////////////////////////////////////////////
+        // [name]
+        //////////////////////////////////////////////////
+        // [description]
+        //////////////////////////////////////////////////
 
 
         this.compilers = {
@@ -103,29 +103,29 @@ class MedianCore {
             },
 
 
-// [Direct Interpreter]
-// MAIN DEVS: @Amenoke
-// [jit]
-// A compilation technology in which code is converted into machine instructions not in advance // (as in AOT compilation), but during program execution.
-// args: bool
-//////////////////////////////////////////////////
-// => [packages]
-// 'directint'
-// The fundamental package required for DI mode operation. Provides basic interpreter
-// functionality.
-//////////////////////////////////////////////////
-// 'directint-sys'
-// Enables system commands beyond basic compiler control. Required for most ~ commands.
-//////////////////////////////////////////////////
-// 'directint-api'
-// Provides standard API functions and prevents automatic Unicode conversion of text.
-//////////////////////////////////////////////////
-// 'di-ext'
-// Adds configuration capabilities through the ~config command.
-//////////////////////////////////////////////////
-// 'directint-actu'
-// Provides system information through the ~i command and enhances error reporting.
-//////////////////////////////////////////////////
+            // [Direct Interpreter]
+            // MAIN DEVS: @Amenoke
+            // [jit]
+            // A compilation technology in which code is converted into machine instructions not in advance // (as in AOT compilation), but during program execution.
+            // args: bool
+            //////////////////////////////////////////////////
+            // => [packages]
+            // 'directint'
+            // The fundamental package required for DI mode operation. Provides basic interpreter
+            // functionality.
+            //////////////////////////////////////////////////
+            // 'directint-sys'
+            // Enables system commands beyond basic compiler control. Required for most ~ commands.
+            //////////////////////////////////////////////////
+            // 'directint-api'
+            // Provides standard API functions and prevents automatic Unicode conversion of text.
+            //////////////////////////////////////////////////
+            // 'di-ext'
+            // Adds configuration capabilities through the ~config command.
+            //////////////////////////////////////////////////
+            // 'directint-actu'
+            // Provides system information through the ~i command and enhances error reporting.
+            //////////////////////////////////////////////////
 
 
             'DI': {
@@ -143,40 +143,40 @@ class MedianCore {
             },
 
 
-// [Flexible Compiler]
-// MAIN DEVS: @Amenoke
-// [release]
-// args: '1.0.0'
-//////////////////////////////////////////////////
-// [path]
-// Specifies the kernel path to the compiler logs.
-// args: <Type>[path]
-//////////////////////////////////////////////////
-// [target]
-// Specifies the kernel path to the compiler configuration logs.
-// args: <Type>[path]
-//////////////////////////////////////////////////
-// [branches]
-// Parameter responsible for using the default structure of connected branches
-// args: bool
-//////////////////////////////////////////////////
-// [optimizationLevel] ~
-// args: int32
-//////////////////////////////////////////////////
-// [inlineFunctions] ~
-// args: bool
-//////////////////////////////////////////////////
-// => [packages]
-// 'fl-var'
-// Essential package for FL mode that enables variable processing and basic functionality.
-//////////////////////////////////////////////////
-// 'fl-rec'
-// Provides comprehensive error logging capabilities for the Flexible Compiler mode. This package is dedicated solely to error tracking and does not provide any other
-// functionality.
-//////////////////////////////////////////////////
-// 'fl-gitbranch'
-// Enables branch processing with the => operator for conditional execution flows.
-//////////////////////////////////////////////////
+            // [Flexible Compiler]
+            // MAIN DEVS: @Amenoke
+            // [release]
+            // args: '1.0.0'
+            //////////////////////////////////////////////////
+            // [path]
+            // Specifies the kernel path to the compiler logs.
+            // args: <Type>[path]
+            //////////////////////////////////////////////////
+            // [target]
+            // Specifies the kernel path to the compiler configuration logs.
+            // args: <Type>[path]
+            //////////////////////////////////////////////////
+            // [branches]
+            // Parameter responsible for using the default structure of connected branches
+            // args: bool
+            //////////////////////////////////////////////////
+            // [optimizationLevel] ~
+            // args: int32
+            //////////////////////////////////////////////////
+            // [inlineFunctions] ~
+            // args: bool
+            //////////////////////////////////////////////////
+            // => [packages]
+            // 'fl-var'
+            // Essential package for FL mode that enables variable processing and basic functionality.
+            //////////////////////////////////////////////////
+            // 'fl-rec'
+            // Provides comprehensive error logging capabilities for the Flexible Compiler mode. This package is dedicated solely to error tracking and does not provide any other
+            // functionality.
+            //////////////////////////////////////////////////
+            // 'fl-gitbranch'
+            // Enables branch processing with the => operator for conditional execution flows.
+            //////////////////////////////////////////////////
 
 
             'FL': {
@@ -198,14 +198,14 @@ class MedianCore {
             },
 
 
-// [Direct Compiler]
-// MAIN DEVS: @Amenoke
-// [fastBuild] ~
-// args: bool
-//////////////////////////////////////////////////
-// [debugSymbols] ~
-// args: bool
-//////////////////////////////////////////////////
+            // [Direct Compiler]
+            // MAIN DEVS: @Amenoke
+            // [fastBuild] ~
+            // args: bool
+            //////////////////////////////////////////////////
+            // [debugSymbols] ~
+            // args: bool
+            //////////////////////////////////////////////////
 
 
             'DC': {
@@ -219,9 +219,9 @@ class MedianCore {
         };
 
 
-//////////////////////////////////////////////////
-// [SYSTEM STATE]
-//////////////////////////////////////////////////
+        //////////////////////////////////////////////////
+        // [SYSTEM STATE]
+        //////////////////////////////////////////////////
 
 
         this.memoryUsage = 0;
@@ -229,13 +229,13 @@ class MedianCore {
         this.lastError = null;
         this.errorLogs = [];
         this.lastCommand = null;
-        this.systemCommands = ['~compil', '~config', '~memory', '~reset', '~dipkg', '~i', '~flpkg', '~logs'];
+        this.systemCommands = ['COMPIL', 'CONF', 'MEM', 'RES', 'DIPKG', 'INFO', 'FLPKG', 'LOGS'];
     }
 
 
-//////////////////////////////////////////////////
-// [CORE METHODS]
-//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // [CORE METHODS]
+    //////////////////////////////////////////////////
 
 
     processCommand(input) {
@@ -247,7 +247,7 @@ class MedianCore {
             .map(line => line.trim())
             .filter(line => line.length > 0);
             if (lines.length === 0) return '';
-            const hasBranches = lines.some(line => line.includes('=>'));
+            const hasBranches = lines.some(line => line.includes('~'));
             if (hasBranches) {
                 if (this.config.compiler !== 'FL' ||
                     !this.compilers.FL.options.packages.active.includes('fl-gitbranch')) {
@@ -265,7 +265,7 @@ class MedianCore {
         const results = [];
         let currentBranch = [];
         for (const line of lines) {
-            if (line.includes('=>')) {
+            if (line.includes('~')) {
                 if (currentBranch.length > 0) {
                     try {
                         results.push(this.processBranch(currentBranch));
@@ -274,7 +274,7 @@ class MedianCore {
                     }
                     currentBranch = [];
                 }
-                const [left, right] = line.split('=>').map(s => s.trim());
+                const [left, right] = line.split('~').map(s => s.trim());
                 if (left) currentBranch.push(left);
                 if (right) currentBranch.push(right);
             } else if (currentBranch.length > 0) {
@@ -315,13 +315,16 @@ class MedianCore {
         return results.join('\n> ');
     }
     processSingleCommand(command) {
-        if (command.startsWith('~')) {
+        if (this.isSystemCommand(command)) {
             return this.processSystemCommand(command);
         }
         if (this.config.compiler === null) {
-            throw new Error('No compiler set (use ~compil)');
+            throw new Error('No compiler set (use COMPIL)');
         }
         return this.processCodeCommand(command);
+    }
+    isSystemCommand(command) {
+        return this.systemCommands.some(cmd => command.startsWith(cmd));
     }
     processSystemCommand(command) {
         try {
@@ -330,19 +333,19 @@ class MedianCore {
             const args = parts.slice(1);
             if (this.config.compiler === 'DI') {
                 const diOpts = this.compilers.DI.options;
-                if (!diOpts.packages.active.includes('directint-sys') && cmd !== '~compil') {
+                if (!diOpts.packages.active.includes('directint-sys') && cmd !== 'COMPIL') {
                     throw new Error('DI in restricted mode (only compiler changes allowed)');
                 }
             }
             switch (cmd) {
-                case '~compil': return this.handleCompilerCommand(args);
-                case '~config': return this.handleConfigCommand(args);
-                case '~memory': return this.handleMemoryCommand();
-                case '~reset': return this.handleResetCommand();
-                case '~dipkg': return this.handleDIPackageCommand(args);
-                case '~flpkg': return this.handleFLPackageCommand(args);
-                case '~i': return this.handleInfoCommand();
-                case '~logs':
+                case 'COMPIL': return this.handleCompilerCommand(args);
+                case 'CONF': return this.handleConfigCommand(args);
+                case 'MEM': return this.handleMemoryCommand();
+                case 'RES': return this.handleResetCommand();
+                case 'DIPKG': return this.handleDIPackageCommand(args);
+                case 'FLPKG': return this.handleFLPackageCommand(args);
+                case 'INFO': return this.handleInfoCommand();
+                case 'LOGS':
                     if (this.config.compiler !== 'FL' ||
                         !this.compilers.FL.options.packages.active.includes('fl-rec')) {
                         throw new Error('Logs require FL compiler with fl-rec package');
@@ -366,9 +369,9 @@ class MedianCore {
     }
 
 
-//////////////////////////////////////////////////
-// [LOGGING SYSTEM]
-//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // [LOGGING SYSTEM]
+    //////////////////////////////////////////////////
 
 
     logError(error) {
@@ -398,7 +401,7 @@ class MedianCore {
         if (error.message.includes('compiler')) return 'COMPILER';
         if (error.message.includes('package')) return 'PACKAGE';
         if (error.message.includes('config')) return 'CONFIG';
-        if (this.lastCommand.startsWith('~')) return 'SYSTEM';
+        if (this.lastCommand.match(/^(COMPIL|CONF|MEM|RES|DIPKG|INFO|FLPKG|LOGS)/)) return 'SYSTEM';
         return 'RUNTIME';
     }
     handleLogsCommand(args) {
@@ -454,9 +457,9 @@ class MedianCore {
     }
 
 
-//////////////////////////////////////////////////
-// [COMPILATION METHODS]
-//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    // [COMPILATION METHODS]
+    //////////////////////////////////////////////////
 
 
     processWithDirectInterpreter(code) {
@@ -503,7 +506,7 @@ handleCompilerCommand(args) {
             return result;
         }
         const compiler = args[0].toUpperCase();
-        if (compiler === 'NULL') {
+        if (compiler === '0') {
             this.config.compiler = null;
             return 'Compiler set to null';
         }
@@ -523,12 +526,12 @@ handleConfigCommand(args) {
         if (args.length === 0) {
             return this.getConfigString();
         }
-        if (args[0] === 'set' && args.length >= 3) {
+        if (args[0] === 'SET' && args.length >= 3) {
             const path = args[1].split('.');
             const value = args.slice(2).join(' ');
             return this.setConfigValue(path, value);
         }
-        throw new Error('Invalid config command. Usage: ~config [set <path> <value>]');
+        throw new Error('Invalid config command. Usage: CONF [SET <path> <value>]');
     } catch (e) {
         this.logError(e);
         throw e;
@@ -580,12 +583,12 @@ handleDIPackageCommand(args) {
         }
         const [cmd, pkg] = args;
         switch (cmd) {
-            case 'install': return this.installDIPackage(pkg);
-            case 'uninstall': return this.uninstallDIPackage(pkg);
-            case 'activate': return this.activateDIPackage(pkg);
-            case 'deactivate': return this.deactivateDIPackage(pkg);
-            case 'list': return this.listDIPackages();
-            case 'available': return this.listAvailableDIPackages();
+            case 'INST': return this.installDIPackage(pkg);
+            case 'UNINST': return this.uninstallDIPackage(pkg);
+            case 'ACT': return this.activateDIPackage(pkg);
+            case 'DEACT': return this.deactivateDIPackage(pkg);
+            case 'LIST': return this.listDIPackages();
+            case 'AV': return this.listAvailableDIPackages();
             default: throw new Error(`Unknown DI package command: ${cmd}`);
         }
     } catch (e) {
@@ -653,7 +656,7 @@ handleFLPackageCommand(args) {
         const [cmd, pkg] = args;
         let result = '';
         switch (cmd) {
-            case 'install':
+            case 'INST':
                 result = this.installFLPackage(pkg);
                 if (pkg === 'fl-gitbranch') {
                     this.compilers.FL.options.branches = true;
@@ -662,26 +665,26 @@ handleFLPackageCommand(args) {
                     }
                 }
                 return result;
-            case 'uninstall':
+            case 'UNINST':
                 result = this.uninstallFLPackage(pkg);
                 if (pkg === 'fl-gitbranch') {
                     this.compilers.FL.options.branches = false;
                 }
                 return result;
-            case 'activate':
+            case 'ACT':
                 result = this.activateFLPackage(pkg);
                 if (pkg === 'fl-gitbranch') {
                     this.compilers.FL.options.branches = true;
                 }
                 return result;
-            case 'deactivate':
+            case 'DEACT':
                 result = this.deactivateFLPackage(pkg);
                 if (pkg === 'fl-gitbranch') {
                     this.compilers.FL.options.branches = false;
                 }
                 return result;
-            case 'list': return this.listFLPackages();
-            case 'available': return this.listAvailableFLPackages();
+            case 'LIST': return this.listFLPackages();
+            case 'AV': return this.listAvailableFLPackages();
             default: throw new Error(`Unknown FL package command: ${cmd}`);
         }
     } catch (e) {
